@@ -6,3 +6,4 @@ google-auth-oauthlib
 google-auth-httplib2
 openpyxl
 requests
+oauth2client

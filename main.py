@@ -1,22 +1,25 @@
 from flask import Flask
 import os
 import pandas as pd
-from googleapiclient.discovery import build
+
+from google.oauth2.service_account import Credentials
 from googleapiclient.http import MediaFileUpload
-from oauth2client.service_account import ServiceAccountCredentials
+from googleapiclient.discovery import build
 
 app = Flask(__name__)
 
-# Path to secret file mounted by Render
-CREDS_PATH = "/etc/secrets/creds.json"
-
-# Google Drive Folder ID from Render environment variables
+CREDS_PATH = "creds.json"
 FOLDER_ID = os.getenv("DRIVE_FOLDER_ID")
 
 
 def upload_excel_to_drive(file_path, file_name):
-    scopes = ["https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_PATH, scopes)
+    scopes = ["https://www.googleapis.com/auth/drive.file"]
+
+    creds = Credentials.from_service_account_file(
+        CREDS_PATH,
+        scopes=scopes
+    )
+
     service = build("drive", "v3", credentials=creds)
 
     metadata = {
@@ -35,12 +38,12 @@ def upload_excel_to_drive(file_path, file_name):
         fields="id"
     ).execute()
 
-    return uploaded.get("id")
+    return uploaded["id"]
 
 
 @app.route("/")
 def home():
-    return "⚡ Flask đang chạy trên Render – API Google Drive OK"
+    return "⚡ Flask Render + Google Drive API đang chạy OK!"
 
 
 @app.route("/upload-test")
@@ -54,8 +57,7 @@ def upload_test():
     df.to_excel(file_name, index=False)
 
     file_id = upload_excel_to_drive(file_name, file_name)
-
-    return f"Đã upload test_upload.xlsx ✔<br>File ID Google Drive: {file_id}"
+    return f"✔ Upload thành công!<br>File ID: {file_id}"
 
 
 if __name__ == "__main__":

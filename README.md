@@ -1,22 +1,25 @@
-# EV Charging Infrastructure & Power Grid Impact Analysis
+# Real-Time Co-Simulation Framework for Smart Grid Resilience
+## Integrating AI, MATLAB/Simulink, and DIgSILENT PowerFactory for EV & Hydrogen Systems
 
-## 📌 Project Overview
-This project focuses on the integration of **Electric Vehicle (EV)** charging stations into the electrical distribution network. Using **Python** for algorithmic logic and **DIgSILENT PowerFactory** for power system simulation, the tool analyzes how EV load growth affects grid stability.
+### 📌 Project Overview
+As power systems transition toward carbon neutrality, the stochastic nature of **Electric Vehicle (EV)** loads poses significant stability challenges. This project develops a high-performance **real-time co-simulation environment** to synchronize AI-driven decision-making with physical grid constraints, utilizing **Hydrogen Fuel Cells (HFC)** as dynamic buffers.
 
-## 🚀 Key Features
-- **Load Forecasting**: Calculates power demand from EV charging stations based on vehicle density and charging profiles.
-- **Grid Simulation**: Integrates with DIgSILENT to perform Load Flow analysis and identify potential voltage violations or transformer overloads.
-- **Optimization**: Suggests optimal charging station placement to minimize power losses and maintain grid reliability.
+### 🚀 Technical Architecture & Integration
+The framework establishes a tri-platform synchronization pipeline to handle complex grid dynamics:
+* **Analytical Layer (Python/AI)**: Executes deep learning models for millisecond-level demand forecasting and adaptive control logic.
+* **Control Layer (MATLAB/Simulink)**: Models high-fidelity **Hydrogen Fuel Cell** dynamics and power electronic interfaces for rapid frequency/voltage support.
+* **Physical Simulation Layer (DIgSILENT PowerFactory)**: Validates system-wide impact through continuous, quasi-dynamic load flow analysis via the **Python-PowerFactory API**.
 
-## 🛠 Tech Stack
-- **Programming**: Python (Data processing & Automation)
-- **Power System Tool**: DIgSILENT PowerFactory
-- **Data Visualization**: Matplotlib/HTML Maps
+### 🛠 Core Engineering & Real-Time Capabilities
+* **Dynamic Congestion Management**: Implemented a real-time "Smart Charging" coordinator that modulates EV charging rates based on instantaneous transformer thermal limits.
+* **Hybrid Energy Buffering**: Engineered a logic-gate system where HFCs act as a real-time buffer to shave peak loads during transient spikes in EV demand.
+* **Automated Data Pipeline**: Developed custom Python scripts to poll grid states every 1-5 seconds, ensuring the AI model operates on fresh, real-time telemetry.
 
-## 📊 Methodology
-1. **Data Acquisition**: Extracting network topology and EV charging parameters.
-2. **Simulation**: Running steady-state analysis to observe voltage profiles.
-3. **Evaluation**: Assessing the impact of "Smart Charging" vs. "Uncoordinated Charging" scenarios.
+### 📈 Technical Stack
+* **Simulation**: DIgSILENT PowerFactory, MATLAB/Simulink.
+* **AI/Programming**: Python (TensorFlow, API Integration), MATLAB Engine API.
+* **Methodology**: Real-time steady-state stability, Voltage Profile Optimization.
 
 ---
-*Developed by Le Dinh Quyen - Electrical Power Systems Student at Da Nang University of Science and Technology.*
+**Lead Researcher: Le Dinh Quyen** | GPA: 3.78/4.0
+*Faculty of Electrical Engineering, University of Science and Technology - UD*

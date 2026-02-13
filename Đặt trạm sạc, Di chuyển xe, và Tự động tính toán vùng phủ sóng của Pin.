@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+class ElectricVehicle {
+private:
+    double batteryCapacity;      // Dung lượng pin tối đa (kWh)
+    double currentBattery;       // Pin hiện tại (kWh)
+    double consumptionRate;      // Mức tiêu thụ (kWh/km)
+    double position;             // Vị trí hiện tại (km)
+
+public:
+    ElectricVehicle(double cap, double rate) {
+        batteryCapacity = cap;
+        currentBattery = cap;
+        consumptionRate = rate;
+        position = 0;
+    }
+
+    double getRange() {
+        return currentBattery / consumptionRate;
+    }
+
+    void drive(double distance) {
+        double neededEnergy = distance * consumptionRate;
+
+        if (neededEnergy > currentBattery) {
+            cout << "Khong du pin de di chuyen!\n";
+        } else {
+            currentBattery -= neededEnergy;
+            position += distance;
+            cout << "Da di chuyen " << distance << " km.\n";
+            cout << "Pin con lai: " << currentBattery << " kWh\n";
+        }
+    }
+
+    void charge() {
+        currentBattery = batteryCapacity;
+        cout << "Da sac day pin!\n";
+    }
+
+    double getPosition() {
+        return position;
+    }
+
+    double getBattery() {
+        return currentBattery;
+    }
+};
+
+// Hàm tìm trạm sạc gần nhất
+double findNearestStation(double currentPos, vector<double> stations) {
+    double minDist = abs(stations[0] - currentPos);
+    double nearest = stations[0];
+
+    for (int i = 1; i < stations.size(); i++) {
+        double dist = abs(stations[i] - currentPos);
+        if (dist < minDist) {
+            minDist = dist;
+            nearest = stations[i];
+        }
+    }
+
+    return nearest;
+}
+
+int main() {
+    ElectricVehicle car(60, 0.2); // 60 kWh, tiêu thụ 0.2 kWh/km
+
+    vector<double> chargingStations = {20, 50, 75, 120};
+
+    double destination = 100;
+
+    cout << "Tam di toi: " << destination << " km\n";
+
+    if (car.getRange() >= destination) {
+        car.drive(destination);
+    } else {
+        cout << "Khong du pin. Tim tram sac gan nhat...\n";
+        double station = findNearestStation(car.getPosition(), chargingStations);
+        cout << "Tram sac gan nhat tai: " << station << " km\n";
+        car.drive(station - car.getPosition());
+        car.charge();
+        car.drive(destination - car.getPosition());
+    }
+
+    return 0;
+}

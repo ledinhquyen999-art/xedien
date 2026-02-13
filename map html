@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Map Maker Pro</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; margin: 0; padding: 20px; }
+        .controls { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; display: flex; gap: 15px; align-items: center; }
+        canvas { background: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: crosshair; border: 1px solid #ddd; }
+        button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-station { background: #f1c40f; color: #000; }
+        .btn-vehicle { background: #3498db; color: white; }
+        .btn-clear { background: #e74c3c; color: white; }
+        button:hover { opacity: 0.8; transform: translateY(-2px); }
+        .status-panel { margin-top: 10px; font-size: 14px; color: #555; }
+    </style>
+</head>
+<body>
+
+    <h2>⚡ Hệ Thống Mô Phỏng Bản Đồ Xe Điện</h2>
+
+    <div class="controls">
+        <button class="btn-station" onclick="setMode('station')">📍 Thêm Trạm Sạc</button>
+        <button class="btn-vehicle" onclick="setMode('vehicle')">🚗 Di Chuyển Xe</button>
+        <div>
+            <label>Phạm vi Pin (km): </label>
+            <input type="range" id="rangeInput" min="50" max="300" value="150" oninput="updateRange(this.value)">
+            <b id="rangeVal">150</b>
+        </div>
+        <button class="btn-clear" onclick="clearAll()">Xóa Hết</button>
+    </div>
+
+    <canvas id="evMap" width="900" height="550"></canvas>
+
+    <div class="status-panel">
+        * Hướng dẫn: Chọn chế độ rồi click lên bản đồ. Vùng xanh hiển thị phạm vi xe có thể tới.
+    </div>
+
+    <script>
+        const canvas = document.getElementById('evMap');
+        const ctx = canvas.getContext('2d');
+        const rangeVal = document.getElementById('rangeVal');
+
+        let mode = 'vehicle'; // 'vehicle' hoặc 'station'
+        let batteryRange = 150;
+        let vehiclePos = { x: 450, y: 275 };
+        let stations = [];
+
+        // Khởi tạo
+        function init() {
+            render();
+        }
+
+        function setMode(m) { mode = m; }
+
+        function updateRange(val) {
+            batteryRange = parseInt(val);
+            rangeVal.innerText = val;
+            render();
+        }
+
+        function clearAll() {
+            stations = [];
+            render();
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = "#f0f0f0";
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 30) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 30) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+        }
+
+        function render() {
+            // 1. Xóa canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+
+            // 2. Vẽ vùng phủ sóng (Pin)
+            ctx.beginPath();
+            ctx.arc(vehiclePos.x, vehiclePos.y, batteryRange, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(46, 204, 113, 0.15)";
+            ctx.fill();
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = "#27ae60";
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset nét đứt
+
+            // 3. Vẽ trạm sạc
+            stations.forEach(s => {
+                // Vẽ biểu tượng trạm
+                ctx.fillStyle = "#f1c40f";
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = "rgba(241, 196, 15, 0.5)";
+                ctx.fillRect(s.x - 12, s.y - 12, 24, 24);
+                ctx.shadowBlur = 0;
+                
+                // Vẽ ký hiệu sét
+                ctx.fillStyle = "black";
+                ctx.font = "bold 14px Arial";
+                ctx.fillText("⚡", s.x - 7, s.y + 6);
+            });
+
+            // 4. Vẽ Xe Điện
+            ctx.fillStyle = "#2980b9";
+            ctx.beginPath();
+            ctx.arc(vehiclePos.x, vehiclePos.y, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (mode === 'station') {
+                stations.push({ x, y });
+            } else {
+                vehiclePos = { x, y };
+            }
+            render();
+        });
+
+        init();
+    </script>
+</body>
+</html>

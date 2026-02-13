@@ -1,9 +1,3 @@
-"""
-EVCS Monitor - SIÊU AN TOÀN với Multiple Backup
-- Backup 3 lớp: JSON + Excel + CSV
-- Tự động khôi phục khi restart
-- Không bao giờ mất dữ liệu thời gian trung bình
-"""
 
 import os
 import re
@@ -593,4 +587,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
